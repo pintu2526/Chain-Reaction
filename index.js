@@ -8,16 +8,16 @@ class Grid {
             this.grid.push([]);
             for (let j = 0; j < cols; j++) {
                 let maxNoOfDots = this.getAllNeighbours({ i: i, j: j });
-                this.grid[i].push(new Cell({ maxNoOfDots:maxNoOfDots.length, noOfDots: 0, postion: { i: i, j: j }, userId: null }));
+                this.grid[i].push(new Cell({ maxNoOfDots:maxNoOfDots.length, noOfDots: 0, position: { i: i, j: j }, userId: null }));
             }
         }
     }
 
-    insert(i, j, userId) {
-        this.startReaction(this.grid[i][j], userId)
+    insert({i, j, userId, animationMethods}) {
+        this.startReaction({cell : this.grid[i][j], userId,animationMethods})
     }
 
-    startReaction(cell, userId) {
+    startReaction({cell, userId, animationMethods}) {
         let queue = [];
         let priority = 0;
         queue.push({ cell: cell, priority: priority });
@@ -29,27 +29,28 @@ class Grid {
                 needToInsert.push(queue[0].cell);
                 queue.shift();
             }
-            console.log(needToInsert)
             needToInsert.map(function (currentCell) {
                 
                 let data = currentCell.insert(userId);
 
                 if (data.explode) {
                     //push all neighbour
-                    let neighbours = self.getAllNeighbours(currentCell.postion);
+                    let neighbours = self.getAllNeighbours(currentCell.position);
                     for(let i = 0;i < neighbours.length; i++){
                         let cell = self.grid[neighbours[i][0]][neighbours[i][1]]
                         queue.push({cell:cell,priority:currentPriority+1});
                     }
                     currentCell.explode();
+                } else {
+                    animationMethods.addDot({i : currentCell.position.i, j:currentCell.position.j});
                 }
             });
         }
     }
 
-    getAllNeighbours(postion) {
-        let i = postion.i;
-        let j = postion.j;
+    getAllNeighbours(position) {
+        let i = position.i;
+        let j = position.j;
         let neighbourArray = [[i - 1, j], [i + 1, j], [i, j - 1], [i, j + 1]];
         let rows = this.rows;
         let cols = this.cols;
@@ -71,10 +72,10 @@ class Grid {
 }
 
 class Cell {
-    constructor({ noOfDots, userId, postion, maxNoOfDots }) {
+    constructor({ noOfDots, userId, position, maxNoOfDots }) {
         this.noOfDots = noOfDots;
         this.userId = userId;
-        this.postion = postion;
+        this.position = position;
         this.maxNoOfDots = maxNoOfDots;
     }
 
@@ -94,28 +95,83 @@ class Cell {
         }
     }
     explode() {
-        console.log("Explosion called for ",this);
         this.noOfDots = 0;
     }
 }
 
 
-let grid = new Grid({ rows: 4, cols: 4, minNoOfDots: 1 })
 
-grid.insert(0,1,1);
-grid.insert(0,1,1);
-grid.insert(0,2,1);
-grid.insert(1,1,1);
-grid.insert(1,1,1);
-grid.insert(1,1,1);
-grid.insert(1,2,1);
-grid.insert(1,2,1);
-grid.insert(1,2,1);
-grid.insert(2,1,1);
-grid.insert(2,1,1);
-grid.insert(2,1,1);
-grid.insert(2,2,1);
-grid.insert(2,2,1);
-grid.insert(2,2,1);
-grid.insert(1,1,1);
-console.log(grid.grid)
+class ChainReactionGame{
+    constructor({baseElement, rows, cols, height, width, padding}) {
+        this.baseElement = baseElement;
+        this.rows = rows;
+        this.cols = cols;
+        this.height = height;
+        this.width = width;
+        this.padding = padding;
+        this.gridStructure = new Grid({rows,cols});
+        let self = this;
+        this.animationMethods = {
+            addDot : function({i,j}) {
+            }
+        }
+        this.initializeGrid();
+    }
+    initializeGrid() {
+        this.gridWidth = this.width - 2*this.padding;
+        this.gridHeight = this.height - 2*this.padding;
+        this.cellWidth = this.gridWidth/this.cols;
+        this.cellHeight = this.gridHeight/this.rows;
+        let gridStructure = this.gridStructure;
+        let animationMethods = this.animationMethods;
+        let data = [];
+        let cellElements = [];
+        
+        for(let row = 0; row < this.rows; row++) {
+            data.push([]);
+            cellElements.push([]);
+            for(let col =0; col < this.cols; col++) {
+                data[row].push({
+                    i : row,
+                    j : col,
+                    x : col*this.cellWidth,
+                    y : row*this.cellHeight,
+                    width : this.cellWidth,
+                    height : this.cellHeight,
+                    dots : this.gridStructure.grid[row][col].noOfDots,
+                    userId : this.gridStructure.grid[row][col].userId
+                });
+                cellElements[row].push(null);
+            }
+        }
+        let gridSVG = this.baseElement.append('svg').attr('height',this.height).attr('width',this.width).attr('class','gridSvg');
+        let row = gridSVG.selectAll('.row').data(data).enter().append("g").attr("class","row");
+        let column = row.selectAll('.square').data(function(d){
+                                                    return d;
+                                                })
+                        .enter().append('rect')
+                            .attr('x', function(d){return d.x})
+                            .attr('y', function(d){return d.y})
+                            .attr('width', function(d){return d.width})
+                            .attr('height', function(d){return d.height})
+                            .style('fill','#222')
+                            .style('stroke',"#fff")
+                            .on('click', function(d) {
+                                let i = d.i;
+                                let j = d.j;
+                                gridStructure.insert({i,j,userId : 1,animationMethods});
+                            });
+        this.cellElements = cellElements;
+    }
+}
+
+let config = {
+    baseElement : d3.select(".diagram"),
+    rows : 10,
+    cols : 10,
+    height : 600,
+    width : 600,
+    padding : 20
+}
+let chainReactionGame = new ChainReactionGame(config);
+

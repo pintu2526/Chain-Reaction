@@ -1,0 +1,14 @@
+.body {
+    min-width: 100%;
+    min-height: 100%;
+    background: black;
+    margin: auto;
+    margin-top: -8px;
+    margin-left: -8px;
+    position: absolute;
+}
+.gridSvg {
+    margin: auto;
+    display: block;
+    margin-top: 2%;
+}
