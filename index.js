@@ -113,6 +113,7 @@ class ChainReactionGame{
         let self = this;
         this.animationMethods = {
             addDot : function({i,j}) {
+                self.dotsGroup.append('image').attr('height',self.cellHeight*2).attr('width', self.cellWidth*2).attr('xlink:href','sphere.svg');
             }
         }
         this.initializeGrid();
@@ -161,6 +162,8 @@ class ChainReactionGame{
                                 let j = d.j;
                                 gridStructure.insert({i,j,userId : 1,animationMethods});
                             });
+        let dotsGroup = gridSVG.append('g').attr('class','dots');
+        this.dotsGroup = dotsGroup;
         this.cellElements = cellElements;
     }
 }
