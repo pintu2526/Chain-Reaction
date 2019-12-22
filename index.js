@@ -113,7 +113,17 @@ class ChainReactionGame{
         let self = this;
         this.animationMethods = {
             addDot : function({i,j}) {
-                self.dotsGroup.append('image').attr('height',self.cellHeight*2).attr('width', self.cellWidth*2).attr('xlink:href','sphere.svg');
+                
+                let dot = self.dotsGroup.append('image').attr('height',self.cellHeight/3).attr('width', self.cellWidth/3).attr('xlink:href','sphere.svg');
+                self.dotElements[i][j].push(dot);
+                let x = j*self.cellWidth;
+                let y = i*self.cellHeight;
+                let dotsPresent = self.gridStructure.grid[i][j].noOfDots;
+                switch(dotsPresent) {
+                    case 1: x+= self.cellWidth/3; y += self.cellHeight/3; break;
+                    case 2: x+= self.cellWidth/3+5; y += self.cellHeight/3+5; break;
+                }
+                dot.attr('x',x).attr('y',y);
             }
         }
         this.initializeGrid();
@@ -165,6 +175,13 @@ class ChainReactionGame{
         let dotsGroup = gridSVG.append('g').attr('class','dots');
         this.dotsGroup = dotsGroup;
         this.cellElements = cellElements;
+        this.dotElements = new Array();
+        for(let i = 0; i < this.rows;i ++) {
+            this.dotElements[i] = new Array();
+            for(let j = 0; j < this.cols; j++) {
+                this.dotElements[i][j] = new Array();
+            }
+        }
     }
 }
 

@@ -6,62 +6,59 @@
 <path d="M0 1A1 1 0 0 1 0-1" stroke="#ff0000">
  <animateTransform attributeName="transform" type="scale" dur="10s" values="1 1; -1 1" repeatCount="indefinite" calcMode="spline" keySplines="0.64 0 0.36 1"/>
 </path>
-<path d="M0 1A1 1 0 0 1 0-1" stroke="#ff0000">
+<path d="M0 1A1 1 0 0 1 0-1" stroke="#ffffff">
  <animateTransform attributeName="transform" type="scale" begin="-0.5s" dur="10s" values="1 1; -1 1" repeatCount="indefinite" calcMode="spline" keySplines="0.64 0 0.36 1"/>
 </path>
 <path  d="M0 1A1 1 0 0 1 0-1" stroke="#ff0000">
  <animateTransform attributeName="transform" type="scale" begin="-1.0s" dur="10s" values="1 1; -1 1" repeatCount="indefinite" calcMode="spline" keySplines="0.64 0 0.36 1"/>
 </path>
-<path d="M0 1A1 1 0 0 1 0-1" stroke="#ff0000">
+<path d="M0 1A1 1 0 0 1 0-1" stroke="#ffffff">
  <animateTransform attributeName="transform" type="scale" begin="-1.5s" dur="10s" values="1 1; -1 1" repeatCount="indefinite" calcMode="spline" keySplines="0.64 0 0.36 1"/>
 </path>
 <path  d="M0 1A1 1 0 0 1 0-1" stroke="#ff0000">
  <animateTransform attributeName="transform" type="scale" begin="-2.0s" dur="10s" values="1 1; -1 1" repeatCount="indefinite" calcMode="spline" keySplines="0.64 0 0.36 1"/>
 </path>
-<path d="M0 1A1 1 0 0 1 0-1" stroke="#ff0000">
+<path d="M0 1A1 1 0 0 1 0-1" stroke="#ffffff">
  <animateTransform attributeName="transform" type="scale" begin="-2.5s" dur="10s" values="1 1; -1 1" repeatCount="indefinite" calcMode="spline" keySplines="0.64 0 0.36 1"/>
 </path>
 <path  d="M0 1A1 1 0 0 1 0-1" stroke="#ff0000">
  <animateTransform attributeName="transform" type="scale" begin="-3.0s" dur="10s" values="1 1; -1 1" repeatCount="indefinite" calcMode="spline" keySplines="0.64 0 0.36 1"/>
 </path>
-<path  d="M0 1A1 1 0 0 1 0-1" stroke="#ff0000">
+<path  d="M0 1A1 1 0 0 1 0-1" stroke="#ffffff">
  <animateTransform attributeName="transform" type="scale" begin="-3.5s" dur="10s" values="1 1; -1 1" repeatCount="indefinite" calcMode="spline" keySplines="0.64 0 0.36 1"/>
 </path>
 <path d="M0 1A1 1 0 0 1 0-1" stroke="#ff0000">
  <animateTransform attributeName="transform" type="scale" begin="-4.0s" dur="10s" values="1 1; -1 1" repeatCount="indefinite" calcMode="spline" keySplines="0.64 0 0.36 1"/>
 </path>
-<path d="M0 1A1 1 0 0 1 0-1" stroke="#ff0000">
+<path d="M0 1A1 1 0 0 1 0-1" stroke="#ffffff">
  <animateTransform attributeName="transform" type="scale" begin="-4.5s" dur="10s" values="1 1; -1 1" repeatCount="indefinite" calcMode="spline" keySplines="0.64 0 0.36 1"/>
 </path>
 <path d="M0 1A1 1 0 0 1 0-1" stroke="#ff0000">
  <animateTransform attributeName="transform" type="scale" begin="-5.0s" dur="10s" values="1 1; -1 1" repeatCount="indefinite" calcMode="spline" keySplines="0.64 0 0.36 1"/>
 </path>
-<path  d="M0 1A1 1 0 0 1 0-1" stroke="#ff0000">
+<path  d="M0 1A1 1 0 0 1 0-1" stroke="#ffffff">
  <animateTransform attributeName="transform" type="scale" begin="-5.5s" dur="10s" values="1 1; -1 1" repeatCount="indefinite" calcMode="spline" keySplines="0.64 0 0.36 1"/>
 </path>
 <path  d="M0 1A1 1 0 0 1 0-1" stroke="#ff0000">
  <animateTransform attributeName="transform" type="scale" begin="-6.0s" dur="10s" values="1 1; -1 1" repeatCount="indefinite" calcMode="spline" keySplines="0.64 0 0.36 1"/>
 </path>
-<path d="M0 1A1 1 0 0 1 0-1" stroke="#ff0000">
+<path d="M0 1A1 1 0 0 1 0-1" stroke="#ffffff">
  <animateTransform attributeName="transform" type="scale" begin="-6.5s" dur="10s" values="1 1; -1 1" repeatCount="indefinite" calcMode="spline" keySplines="0.64 0 0.36 1"/>
 </path>
 <path  d="M0 1A1 1 0 0 1 0-1" stroke="#ff0000">
  <animateTransform attributeName="transform" type="scale" begin="-7.0s" dur="10s" values="1 1; -1 1" repeatCount="indefinite" calcMode="spline" keySplines="0.64 0 0.36 1"/>
 </path>
-<path  d="M0 1A1 1 0 0 1 0-1" stroke="#ff0000">
+<path  d="M0 1A1 1 0 0 1 0-1" stroke="#ffffff">
  <animateTransform attributeName="transform" type="scale" begin="-7.5s" dur="10s" values="1 1; -1 1" repeatCount="indefinite" calcMode="spline" keySplines="0.64 0 0.36 1"/>
 </path>
 <path  d="M0 1A1 1 0 0 1 0-1" stroke="#ff0000">
  <animateTransform attributeName="transform" type="scale" begin="-8.0s" dur="10s" values="1 1; -1 1" repeatCount="indefinite" calcMode="spline" keySplines="0.64 0 0.36 1"/>
 </path>
-<path  d="M0 1A1 1 0 0 1 0-1" stroke="#ff0000">
+<path  d="M0 1A1 1 0 0 1 0-1" stroke="#ffffff">
  <animateTransform attributeName="transform" type="scale" begin="-8.5s" dur="10s" values="1 1; -1 1" repeatCount="indefinite" calcMode="spline" keySplines="0.64 0 0.36 1"/>
 </path>
 <path d="M0 1A1 1 0 0 1 0-1" stroke="#ff0000">
  <animateTransform attributeName="transform" type="scale" begin="-9.0s" dur="10s" values="1 1; -1 1" repeatCount="indefinite" calcMode="spline" keySplines="0.64 0 0.36 1"/>
-</path>
-<path  d="M0 1A1 1 0 0 1 0-1" stroke="#ff0000">
- <animateTransform attributeName="transform" type="scale" begin="-9.5s" dur="10s" values="1 1; -1 1" repeatCount="indefinite" calcMode="spline" keySplines="0.64 0 0.36 1"/>
 </path>
 </g>
 <use xlink:href="#grid" transform="rotate(90)"/>
