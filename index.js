@@ -14,12 +14,13 @@ class Grid {
     }
 
     insert({i, j, userId, animationMethods}) {
-        if(this.grid[i][j].userId == null || this.grid[i][j].userId == userId) {
+        // if(this.grid[i][j].userId == null || this.grid[i][j].userId == userId) {
             this.startReaction({cell : this.grid[i][j], userId,animationMethods})
-        }
+        // }
     }
 
     startReaction({cell, userId, animationMethods}) {
+        animationMethods.dissableClick();
         let queue = [];
         let animationQueue = [];
         let priority = 0;
@@ -198,6 +199,8 @@ class ChainReactionGame{
                             animation.on('end', () => {
                                 if(animationQueue.length) {
                                     handleExplodeAnimation(animationQueue[0]);
+                                } else {
+                                    self.animationMethods.enableClick();
                                 }
                             });
                         }
@@ -207,7 +210,16 @@ class ChainReactionGame{
                     handleExplodeAnimation(animationQueue[0]);
                 } else {
                     self.animationMethods.changeTurn();
+                    this.enableClick();
                 }
+            },
+            enableClick: function () {
+                d3.selectAll('.square').style('pointer-events', 'all');
+                d3.selectAll('.dot').style('pointer-events','all');
+            },
+            dissableClick: function () {
+                d3.selectAll('.square').style('pointer-events', 'none');
+                d3.selectAll('.dot').style('pointer-events', 'none');
             }
         }
         this.initializeGrid();
