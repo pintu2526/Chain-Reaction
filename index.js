@@ -43,6 +43,7 @@ class Grid {
                     currentCell.explode();
                 } else {
                     animationMethods.addDot({i : currentCell.position.i, j:currentCell.position.j});
+                    animationMethods.moveDot(currentCell.position.i,currentCell.position.j,2,3, 3);
                 }
             });
         }
@@ -112,8 +113,7 @@ class ChainReactionGame{
         this.gridStructure = new Grid({rows,cols});
         let self = this;
         this.animationMethods = {
-            addDot : function({i,j}) {
-                
+            addDot : function({i,j}) {                
                 let dot = self.dotsGroup.append('image').attr('height',self.cellHeight/3).attr('width', self.cellWidth/3).attr('xlink:href','sphere.svg');
                 self.dotElements[i][j].push(dot);
                 let x = j*self.cellWidth;
@@ -124,6 +124,23 @@ class ChainReactionGame{
                     case 2: x+= self.cellWidth/3+5; y += self.cellHeight/3+5; break;
                 }
                 dot.attr('x',x).attr('y',y);
+                
+            },
+            moveDot: function(sourceI,sourceJ,destI,destJ,destPosition) {
+                console.log(self.dotElements[sourceI][sourceJ]);
+                let x = destJ*self.cellWidth;
+                let y = destI*self.cellHeight;
+
+                switch(destPosition) {
+                    case 1: x += self.cellWidth/4; y += self.cellHeight/4; break;
+                    case 2: x += self.cellWidth/2; y += self.cellHeight/4; break;
+                    case 3: x += self.cellWidth/3; y += self.cellHeight/2; break;
+                }
+                let dot = self.dotElements[sourceI][sourceJ][0]
+                    .transition()
+                    .duration(500)
+                    .attr("x", x)
+                    .attr("y", y);   
             }
         }
         this.initializeGrid();
