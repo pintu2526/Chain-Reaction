@@ -21,6 +21,7 @@ class Grid {
         let queue = [];
         let priority = 0;
         queue.push({ cell: cell, priority: priority });
+        animationMethods.addDot({i : cell.position.i, j:cell.position.j});
         let self = this;
         while (queue.length !== 0) {
             let currentPriority = queue[0].priority;
@@ -39,11 +40,9 @@ class Grid {
                     for(let i = 0;i < neighbours.length; i++){
                         let cell = self.grid[neighbours[i][0]][neighbours[i][1]]
                         queue.push({cell:cell,priority:currentPriority+1});
+                        animationMethods.moveDot(currentCell.position.i,currentCell.position.j,0,cell.position.i,cell.position.j,cell.noOfDots+1)
                     }
                     currentCell.explode();
-                } else {
-                    animationMethods.addDot({i : currentCell.position.i, j:currentCell.position.j});
-                    animationMethods.moveDot(currentCell.position.i,currentCell.position.j,2,3, 3);
                 }
             });
         }
@@ -103,6 +102,16 @@ class Cell {
 
 
 class ChainReactionGame{
+    addPositionOffset(x,y,position) {
+        let self = this;
+        switch(position) {
+            case 1: x += self.cellWidth/4; y += self.cellHeight/3; break;
+            case 2: x += self.cellWidth/2; y += self.cellHeight/3; break;
+            case 3: x += self.cellWidth/3; y += self.cellHeight/2; break;
+            case 4: x += self.cellWidth/3; y += self.cellHeight/4; break;
+        }
+        return {x,y};
+    }
     constructor({baseElement, rows, cols, height, width, padding}) {
         this.baseElement = baseElement;
         this.rows = rows;
@@ -119,28 +128,31 @@ class ChainReactionGame{
                 let x = j*self.cellWidth;
                 let y = i*self.cellHeight;
                 let dotsPresent = self.gridStructure.grid[i][j].noOfDots;
-                switch(dotsPresent) {
-                    case 1: x+= self.cellWidth/3; y += self.cellHeight/3; break;
-                    case 2: x+= self.cellWidth/3+5; y += self.cellHeight/3+5; break;
-                }
+                let pos = self.addPositionOffset(x,y,dotsPresent+1);
+                x = pos.x; 
+                y = pos.y;
                 dot.attr('x',x).attr('y',y);
-                
+                dot.on('click', function(d) {
+                    self.gridStructure.insert({i,j,userId : 1,animationMethods : self.animationMethods});
+                });
             },
-            moveDot: function(sourceI,sourceJ,destI,destJ,destPosition) {
-                console.log(self.dotElements[sourceI][sourceJ]);
+            moveDot: function(sourceI,sourceJ,sourceDotIndex,destI,destJ,destPosition) {
                 let x = destJ*self.cellWidth;
                 let y = destI*self.cellHeight;
 
-                switch(destPosition) {
-                    case 1: x += self.cellWidth/4; y += self.cellHeight/4; break;
-                    case 2: x += self.cellWidth/2; y += self.cellHeight/4; break;
-                    case 3: x += self.cellWidth/3; y += self.cellHeight/2; break;
-                }
-                let dot = self.dotElements[sourceI][sourceJ][0]
-                    .transition()
+                let pos = self.addPositionOffset(x,y,destPosition);
+                x = pos.x; 
+                y = pos.y;
+                let dot = self.dotElements[sourceI][sourceJ][sourceDotIndex];
+                dot.transition()
                     .duration(500)
                     .attr("x", x)
-                    .attr("y", y);   
+                    .attr("y", y)
+                dot.on('click', function(d) {
+                    self.gridStructure.insert({i : destI,j :destJ,userId : 1,animationMethods : self.animationMethods});
+                });
+                self.dotElements[sourceI][sourceJ].splice(sourceDotIndex,1);
+                self.dotElements[destI][destJ].push(dot);
             }
         }
         this.initializeGrid();
