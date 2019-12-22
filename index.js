@@ -19,6 +19,7 @@ class Grid {
 
     startReaction({cell, userId, animationMethods}) {
         let queue = [];
+        let animationQueue = [];
         let priority = 0;
         queue.push({ cell: cell, priority: priority });
         animationMethods.addDot({i : cell.position.i, j:cell.position.j});
@@ -40,12 +41,14 @@ class Grid {
                     for(let i = 0;i < neighbours.length; i++){
                         let cell = self.grid[neighbours[i][0]][neighbours[i][1]]
                         queue.push({cell:cell,priority:currentPriority+1});
-                        animationMethods.moveDot(currentCell.position.i,currentCell.position.j,0,cell.position.i,cell.position.j,cell.noOfDots+1)
+                        animationQueue.push({sourceCell : currentCell, destCell : cell, priority : currentPriority+1})
                     }
                     currentCell.explode();
                 }
             });
         }
+
+        animationMethods.animateExplosions(animationQueue);
     }
 
     getAllNeighbours(position) {
@@ -105,9 +108,9 @@ class ChainReactionGame{
     addPositionOffset(x,y,position) {
         let self = this;
         switch(position) {
-            case 1: x += self.cellWidth/4; y += self.cellHeight/3; break;
-            case 2: x += self.cellWidth/2; y += self.cellHeight/3; break;
-            case 3: x += self.cellWidth/3; y += self.cellHeight/2; break;
+            case 1: x += self.cellWidth/5; y += self.cellHeight/4.5; break;
+            case 2: x += self.cellWidth/2.3; y += self.cellHeight/4.5; break;
+            case 3: x += self.cellWidth/3; y += self.cellHeight/2.5; break;
             case 4: x += self.cellWidth/3; y += self.cellHeight/4; break;
         }
         return {x,y};
@@ -144,7 +147,7 @@ class ChainReactionGame{
                 x = pos.x; 
                 y = pos.y;
                 let dot = self.dotElements[sourceI][sourceJ][sourceDotIndex];
-                dot.transition()
+                let animation = dot.transition()
                     .duration(500)
                     .attr("x", x)
                     .attr("y", y)
@@ -153,6 +156,32 @@ class ChainReactionGame{
                 });
                 self.dotElements[sourceI][sourceJ].splice(sourceDotIndex,1);
                 self.dotElements[destI][destJ].push(dot);
+                return animation;
+            },
+            animateExplosions: function(animationQueue) {
+                function handleExplodeAnimation(currentQueueElement) {
+                    let currentPriority = currentQueueElement.priority;
+                    let needToAnimate = [];
+                    while (animationQueue[0] && animationQueue[0].priority == currentPriority) {
+                        needToAnimate.push({sourceCell : animationQueue[0].sourceCell, destCell : animationQueue[0].destCell});
+                        animationQueue.shift();
+                    }
+                    for(let i = 0; i < needToAnimate.length; i++) {
+                        let obj = needToAnimate[i];
+                        let cellPosition = self.dotElements[obj.destCell.position.i][obj.destCell.position.j].length+1;
+                        let animation = self.animationMethods.moveDot(obj.sourceCell.position.i,obj.sourceCell.position.j,0,obj.destCell.position.i,obj.destCell.position.j,cellPosition);
+                        if(i == needToAnimate.length-1) {
+                            animation.on('end', () => {
+                                if(animationQueue.length) {
+                                    handleExplodeAnimation(animationQueue[0]);
+                                }
+                            })
+                        }
+                    }
+                }
+                if(animationQueue.length) {
+                    handleExplodeAnimation(animationQueue[0]);
+                }
             }
         }
         this.initializeGrid();
