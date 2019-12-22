@@ -14,9 +14,9 @@ class Grid {
     }
 
     insert({i, j, userId, animationMethods}) {
-        // if(this.grid[i][j].userId == null || this.grid[i][j].userId == userId) {
+        if(this.grid[i][j].userId == null || this.grid[i][j].userId == userId) {
             this.startReaction({cell : this.grid[i][j], userId,animationMethods})
-        // }
+        }
     }
 
     startReaction({cell, userId, animationMethods}) {
@@ -290,7 +290,7 @@ let config = {
     height : 600,
     width : 600,
     padding : 20,
-    users : ['green','blue','red']
+    users : ['#1EBBA6','#EE7836']
 }
 d3.xml('sphere.svg').then(data => {
     config.dotElement = data.documentElement;
