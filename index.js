@@ -102,6 +102,7 @@ class Cell {
     }
     explode() {
         this.noOfDots = 0;
+        this.userId = null;
     }
 }
 
@@ -200,6 +201,7 @@ class ChainReactionGame{
                                 if(animationQueue.length) {
                                     handleExplodeAnimation(animationQueue[0]);
                                 } else {
+                                    self.animationMethods.changeTurn();
                                     self.animationMethods.enableClick();
                                 }
                             });
@@ -285,8 +287,8 @@ class ChainReactionGame{
 
 let config = {
     baseElement : d3.select(".diagram"),
-    rows : 10,
-    cols : 10,
+    rows : 5,
+    cols : 5,
     height : 600,
     width : 600,
     padding : 20,
