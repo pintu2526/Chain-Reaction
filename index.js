@@ -14,7 +14,9 @@ class Grid {
     }
 
     insert({i, j, userId, animationMethods}) {
-        this.startReaction({cell : this.grid[i][j], userId,animationMethods})
+        if(this.grid[i][j].userId == null || this.grid[i][j].userId == userId) {
+            this.startReaction({cell : this.grid[i][j], userId,animationMethods})
+        }
     }
 
     startReaction({cell, userId, animationMethods}) {
@@ -22,7 +24,7 @@ class Grid {
         let animationQueue = [];
         let priority = 0;
         queue.push({ cell: cell, priority: priority });
-        animationMethods.addDot({i : cell.position.i, j:cell.position.j});
+        animationMethods.addDot({i : cell.position.i, j:cell.position.j,userId});
         let self = this;
         while (queue.length !== 0) {
             let currentPriority = queue[0].priority;
@@ -41,14 +43,14 @@ class Grid {
                     for(let i = 0;i < neighbours.length; i++){
                         let cell = self.grid[neighbours[i][0]][neighbours[i][1]]
                         queue.push({cell:cell,priority:currentPriority+1});
-                        animationQueue.push({sourceCell : currentCell, destCell : cell, priority : currentPriority+1})
+                        animationQueue.push({sourceCell : currentCell, destCell : cell, priority : currentPriority+1, userId : userId});
                     }
                     currentCell.explode();
                 }
             });
         }
 
-        animationMethods.animateExplosions(animationQueue);
+        animationMethods.animateExplosions(animationQueue,userId);
     }
 
     getAllNeighbours(position) {
@@ -115,7 +117,7 @@ class ChainReactionGame{
         }
         return {x,y};
     }
-    constructor({baseElement, rows, cols, height, width, padding}) {
+    constructor({baseElement, rows, cols, height, width, padding, users, dotElement}) {
         this.baseElement = baseElement;
         this.rows = rows;
         this.cols = cols;
@@ -123,10 +125,23 @@ class ChainReactionGame{
         this.width = width;
         this.padding = padding;
         this.gridStructure = new Grid({rows,cols});
+        this.users = users;
+        this.noOfUsers = users.length;
+        this.dotElement = dotElement;
+        this.turn = 0;
         let self = this;
         this.animationMethods = {
-            addDot : function({i,j}) {                
-                let dot = self.dotsGroup.append('image').attr('height',self.cellHeight/3).attr('width', self.cellWidth/3).attr('xlink:href','sphere.svg');
+            changeTurn: function() {
+                self.turn += 1;
+                self.turn = self.turn % self.noOfUsers;
+                self.baseElement.selectAll('.square').style('stroke',self.users[self.turn]);
+            },
+            addDot : function({i,j, userId}) {       
+                let dotElement = self.dotElement.cloneNode(true);         
+                let dot = d3.select(self.dotsGroup.node().appendChild(dotElement));
+                let color = self.users[userId];
+                dot.attr('height',self.cellHeight/3).attr('width', self.cellWidth/3);
+                dot.select('.dotGrid').attr('stroke',color);
                 self.dotElements[i][j].push(dot);
                 let x = j*self.cellWidth;
                 let y = i*self.cellHeight;
@@ -136,29 +151,38 @@ class ChainReactionGame{
                 y = pos.y;
                 dot.attr('x',x).attr('y',y);
                 dot.on('click', function(d) {
-                    self.gridStructure.insert({i,j,userId : 1,animationMethods : self.animationMethods});
+                    self.gridStructure.insert({i,j,userId : self.turn,animationMethods : self.animationMethods});
                 });
             },
-            moveDot: function(sourceI,sourceJ,sourceDotIndex,destI,destJ,destPosition) {
+            moveDot: function(sourceI,sourceJ,sourceDotIndex,destI,destJ,destPosition, userId) {
                 let x = destJ*self.cellWidth;
                 let y = destI*self.cellHeight;
-
+                let color = self.users[userId];
                 let pos = self.addPositionOffset(x,y,destPosition);
                 x = pos.x; 
                 y = pos.y;
                 let dot = self.dotElements[sourceI][sourceJ][sourceDotIndex];
+                self.dotElements[sourceI][sourceJ].splice(sourceDotIndex,1);
+                self.dotElements[destI][destJ].push(dot);
+                dot.select('.dotGrid').attr('stroke',color);
                 let animation = dot.transition()
                     .duration(500)
                     .attr("x", x)
                     .attr("y", y)
+                    .transition()
+                    .duration(0)
+                    .on('end',() => {
+                        self.dotElements[destI][destJ].forEach(function(d) {
+                            d.select('.dotGrid').attr('stroke',color);
+                        });
+                    }).transition().duration(0);
+                    
                 dot.on('click', function(d) {
                     self.gridStructure.insert({i : destI,j :destJ,userId : 1,animationMethods : self.animationMethods});
                 });
-                self.dotElements[sourceI][sourceJ].splice(sourceDotIndex,1);
-                self.dotElements[destI][destJ].push(dot);
                 return animation;
             },
-            animateExplosions: function(animationQueue) {
+            animateExplosions: function(animationQueue,userId) {
                 function handleExplodeAnimation(currentQueueElement) {
                     let currentPriority = currentQueueElement.priority;
                     let needToAnimate = [];
@@ -169,18 +193,20 @@ class ChainReactionGame{
                     for(let i = 0; i < needToAnimate.length; i++) {
                         let obj = needToAnimate[i];
                         let cellPosition = self.dotElements[obj.destCell.position.i][obj.destCell.position.j].length+1;
-                        let animation = self.animationMethods.moveDot(obj.sourceCell.position.i,obj.sourceCell.position.j,0,obj.destCell.position.i,obj.destCell.position.j,cellPosition);
+                        let animation = self.animationMethods.moveDot(obj.sourceCell.position.i,obj.sourceCell.position.j,0,obj.destCell.position.i,obj.destCell.position.j,cellPosition,userId);
                         if(i == needToAnimate.length-1) {
                             animation.on('end', () => {
                                 if(animationQueue.length) {
                                     handleExplodeAnimation(animationQueue[0]);
                                 }
-                            })
+                            });
                         }
                     }
                 }
                 if(animationQueue.length) {
                     handleExplodeAnimation(animationQueue[0]);
+                } else {
+                    self.animationMethods.changeTurn();
                 }
             }
         }
@@ -195,7 +221,7 @@ class ChainReactionGame{
         let animationMethods = this.animationMethods;
         let data = [];
         let cellElements = [];
-        
+        let self = this;
         for(let row = 0; row < this.rows; row++) {
             data.push([]);
             cellElements.push([]);
@@ -223,13 +249,15 @@ class ChainReactionGame{
                             .attr('y', function(d){return d.y})
                             .attr('width', function(d){return d.width})
                             .attr('height', function(d){return d.height})
+                            .attr('class','square')
                             .style('fill','#222')
                             .style('stroke',"#fff")
                             .on('click', function(d) {
                                 let i = d.i;
                                 let j = d.j;
-                                gridStructure.insert({i,j,userId : 1,animationMethods});
+                                gridStructure.insert({i,j,userId : self.turn,animationMethods});
                             });
+        this.baseElement.selectAll('.square').style('stroke',this.users[this.turn]);
         let dotsGroup = gridSVG.append('g').attr('class','dots');
         this.dotsGroup = dotsGroup;
         this.cellElements = cellElements;
@@ -249,7 +277,11 @@ let config = {
     cols : 10,
     height : 600,
     width : 600,
-    padding : 20
+    padding : 20,
+    users : ['green','blue','red']
 }
-let chainReactionGame = new ChainReactionGame(config);
+d3.xml('sphere.svg').then(data => {
+    config.dotElement = data.documentElement;
+    let chainReactionGame = new ChainReactionGame(config);
+})
 
